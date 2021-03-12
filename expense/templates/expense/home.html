@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>DEM | Home</title>
+  </head>
+  <body>
+    <hr />
+    <p>
+      <span>HOME PAGE --- </span
+      ><a href="{% url 'expense-create' %}">Expense</a>
+      <span> -- </span
+      ><a href="{% url 'category-create' %}">Category</a>
+    </p>
+    <hr />
+    <h1>Welcome To</h1>
+    <h3>Daily Expense Manager...</h3>
+    <table>
+      <caption>
+        Expense Report
+      </caption>
+      <tr>
+        <th colspan="2">#Report</th>
+        <th colspan="2">Expense</th>
+        <th colspan="2">Transaction</th>
+        <th colspan="2">Using Category</th>
+      </tr>
+      <tr>
+        <td colspan="2" style="text-align: center">
+          <a href="{% url 'archive_day' today|date:'Y' today|date:'b' today|date:'j' %}">Today</a>
+        </td>
+        <td colspan="2" style="text-align: center">{{ reports.day.total_amount }}</td>
+        <td colspan="2" style="text-align: center">{{ reports.day.trax }}</td>
+        <td colspan="2" style="text-align: center">{{ reports.day.category_count }}</td>
+      </tr>
+      <tr>
+        <td colspan="2" style="text-align: center">
+          <a href="{% url 'archive_week' today|date:'Y' today|date:'W' %}">Week</a>
+        </td>
+        <td colspan="2" style="text-align: center">{{ reports.week.total_amount }}</td>
+        <td colspan="2" style="text-align: center">{{ reports.week.trax }}</td>
+        <td colspan="2" style="text-align: center">{{ reports.week.category_count }}</td>
+      </tr>
+      <tr>
+        <td colspan="2" style="text-align: center">
+          <a href="{% url 'archive_month' today|date:'Y' today|date:'b' %}">Month</a>
+        </td>
+        <td colspan="2" style="text-align: center">{{ reports.month.total_amount }}</td>
+        <td colspan="2" style="text-align: center">{{ reports.month.trax }}</td>
+        <td colspan="2" style="text-align: center">{{ reports.month.category_count }}</td>
+      </tr>
+    </table>
+  </body>
+</html>
