@@ -1,2 +1,2 @@
 # DEM
-Daily Expense Manager
+Django Daily Expense Manager
