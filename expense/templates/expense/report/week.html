@@ -1,17 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title>DEM | Expense</title>
-  </head>
-  <body>
-    <hr />
-    <h3>Daily Expense Manager...</h3>
-    <hr />
-    <p>
-      <span>EXPENSE WEEK PAGE --- </span
-      ><a href="{% url 'expense-home' %}">Home</a>
-    </p>
-    <hr />
+{% extends 'expense/base/base.html' %}
+
+{% block title %}{{page_name}}{% endblock title %}
+
+{% block content %}
     <h1>Week {{ week|date:'W' }}</h1>
     {% if object_list %}
     <table>
@@ -63,5 +54,4 @@
             Next Week: <a href="{% url 'archive_week' next_week|date:'Y' next_week|date:'W' %}">{{ next_week }}</a>
         {% endif %}
     </p>
-  </body>
-</html>
+{% block content %}
