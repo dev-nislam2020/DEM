@@ -1,0 +1,60 @@
+{% extends 'expense/base/base.html' %}
+
+{% block title %}{{page_name}}{% endblock title %}
+
+{% block content %}
+{% if is_day %}
+<h1>{{ day }}</h1>
+<h4>Today -- Total Transaction : {{report.trax}}, Total Amount : {{report.total_amount}}</h4>
+{% if object_list %}
+{% include 'expense/base/list.html' with page_obj=object_list %}
+{% else %}
+<p>You have no expense</p>
+{% endif %}
+<p>
+    {% if previous_day %}
+        Previous Day: <a href="{% url 'archive_day' previous_day|date:'Y' previous_day|date:'b'  previous_day|date:'j' %}">{{ previous_day }}</a>
+    {% endif %}
+    {% if previous_day and next_day %}--{% endif %}
+    {% if next_day %}
+        Next Day: <a href="{% url 'archive_day' next_day|date:'Y' next_day|date:'b'  next_day|date:'j' %}">{{ next_day }}</a>
+    {% endif %}
+</p>
+{% endif %}
+{% if is_week %}
+<h1>Week {{ week|date:'W' }}</h1>
+<h4>Week -- Total Transaction : {{report.trax}}, Total Amount : {{report.total_amount}}</h4>
+    {% if object_list %}
+    {% include 'expense/base/list.html' with page_obj=object_list %}
+    {% else %}
+    <p>You have no expense</p>
+    {% endif %}
+    <p>
+        {% if previous_week %}
+            Previous Week: <a href="{% url 'archive_week' previous_week|date:'Y' previous_week|date:'W' %}">{{ previous_week }}</a>
+        {% endif %}
+        {% if previous_week and next_week %}--{% endif %}
+        {% if next_week %}
+            Next Week: <a href="{% url 'archive_week' next_week|date:'Y' next_week|date:'W' %}">{{ next_week }}</a>
+        {% endif %}
+    </p>
+{% endif %}
+{% if is_month %}
+<h1>{{ month|date:'F' }}</h1>
+<h4>Month -- Total Transaction : {{report.trax}}, Total Amount : {{report.total_amount}}</h4>
+    {% if object_list %}
+    {% include 'expense/base/list.html' with page_obj=object_list %}
+    {% else %}
+    <p>You have no expense</p>
+    {% endif %}
+    <p>
+        {% if previous_month %}
+            Previous Month: <a href="{% url 'archive_month' previous_month|date:'Y' previous_month|date:'b' %}">{{ previous_month }}</a>
+        {% endif %}
+        {% if previous_month and next_month %}--{% endif %}
+        {% if next_month %}
+            Next Day: <a href="{% url 'archive_month' next_month|date:'Y' next_month|date:'b' %}">{{ next_month }}</a>
+        {% endif %}
+    </p>
+{% endif %}
+{% endblock content %}

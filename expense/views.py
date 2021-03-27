@@ -156,8 +156,6 @@ class CategoryCreateView(CreateView):
         context = super(CategoryCreateView, self).get_context_data(**kwargs)
         # Add in a QuerySet of all the books
         category_list = Category.objects.all()
-        category = category_list.first()
-        print(category.expense_set.all().count())
         paginator = Paginator(category_list, 9)
         page_number = self.request.GET.get('page')
         page_obj = paginator.get_page(page_number)
@@ -169,14 +167,20 @@ class CategoryCreateView(CreateView):
 
 class CategoryUpdateView(UpdateView):
     form_class = CategoryForm
-    template_name = 'expense/category/update.html'
+    template_name = 'expense/create.html'
     success_url = reverse_lazy('category-create')
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(CategoryUpdateView, self).get_context_data(**kwargs)
         # Add in a QuerySet of all the books
-        context['category_list'] = Category.objects.all()
+        category_list = Category.objects.all()
+        paginator = Paginator(category_list, 9)
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        # Add in a QuerySet of all the books
+        context['page_obj'] = page_obj
+        context['page_name'] = "Update Expense Category"
         context['is_category_expense'] = True
         return context
 
@@ -187,17 +191,47 @@ class TodayView(DayArchiveView):
     queryset = Expense.objects.all()
     date_field = "create_at"
     allow_future = True
-    template_name = 'expense/report/day.html'
+    template_name = 'expense/report.html'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(TodayView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        expense = context['object_list']
+        context['report'] = report(expense)
+        context['page_name'] = "Today Expense"
+        context['is_day'] = True
+        return context
 
 class WeekView(WeekArchiveView):
     queryset = Expense.objects.all()
     date_field = "create_at"
-    template_name = 'expense/report/week.html'
+    template_name = 'expense/report.html'
     week_format = "%W"
     allow_future = True
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(WeekView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        expense = context['object_list']
+        context['report'] = report(expense)
+        context['page_name'] = "Week Expense"
+        context['is_week'] = True
+        return context
 
 class MonthView(MonthArchiveView):
     queryset = Expense.objects.all()
     date_field = "create_at"
-    template_name = 'expense/report/month.html'
+    template_name = 'expense/report.html'
     allow_future = True
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(MonthView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        expense = context['object_list']
+        context['report'] = report(expense)
+        context['page_name'] = "Month Expense"
+        context['is_month'] = True
+        return context

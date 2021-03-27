@@ -1,0 +1,24 @@
+<table>
+  <tr>
+    <th>#ID</th>
+    <th>Date</th>
+    <th>Notes</th>
+    <th>Amount</th>
+    <th>Delete</th>
+    <th>Edit</th>
+  </tr>
+  {% for expense in page_obj %}
+  <tr>
+    <td>{{ forloop.counter }}</td>
+    <td>{{ expense.create_at }}</td>
+    {% if expense.notes %}
+    <td>{{ expense.notes }}</td>
+    {% else %}
+    <td>No Notes</td>
+    {% endif %}
+    <td>{{ expense.amount }}</td>
+    <td><a href="{% url 'expense-delete' expense.pk %}">Delete</a></td>
+    <td><a href="{% url 'expense-update' expense.pk %}">Edit</a></td>
+  </tr>
+{% endfor %}
+</table>
