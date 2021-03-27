@@ -22,7 +22,6 @@ def report(expense_list):
     else:
         data['total_amount'] = expense_list.all().aggregate(Sum('amount'))['amount__sum']
     data['trax'] = expense_list.count()
-    data['category_count'] = expense_list.values_list('category', flat=True).distinct().count()
     return data
 
 def get_day_expense(obj, today):
@@ -38,6 +37,13 @@ def get_month_expense(obj, today):
     expense_list = obj.filter(create_at__month=today.month)
     return report(expense_list)
     
+def get_expense_data(expense, today):
+    data = {}
+    data['day'] = get_day_expense(expense, today)
+    data['week'] = get_week_expense(expense, today)
+    data['month'] = get_month_expense(expense, today)
+    return data
+
 
 class HomeView(TemplateView):
     template_name = 'expense/home.html'
@@ -45,18 +51,11 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(HomeView, self).get_context_data(**kwargs)
-
         expense = Expense.objects.all()
         today = date.today()
-        current_week = today.isocalendar()[1]
-
-        data = {}
-        data['day'] = get_day_expense(expense, today)
-        data['week'] = get_week_expense(expense, today)
-        data['month'] = get_month_expense(expense, today)
 
         context['today'] = today
-        context['reports'] = data
+        context['reports'] = get_expense_data(expense, today)
         return context
 
 class ExpenseCreateView(CreateView):
@@ -68,7 +67,7 @@ class ExpenseCreateView(CreateView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(ExpenseCreateView, self).get_context_data(**kwargs)
-        expense_list = Expense.objects.all()
+        expense_list = Expense.objects.filter(create_at=date.today())
         paginator = Paginator(expense_list, 9)
         page_number = self.request.GET.get('page')
         page_obj = paginator.get_page(page_number)
@@ -76,6 +75,7 @@ class ExpenseCreateView(CreateView):
         context['page_obj'] = page_obj
         context['page_name'] = "Add Expense"
         context['is_previose'] = True
+        context['report'] = report(expense_list)
         return context
     
     def form_valid(self, form):
@@ -92,13 +92,14 @@ class ExpensePreviousCreateView(CreateView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(ExpensePreviousCreateView, self).get_context_data(**kwargs)
-        expense_list = Expense.objects.all()
+        expense_list = Expense.objects.filter(create_at=date.today())
         paginator = Paginator(expense_list, 9)
         page_number = self.request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         # Add in a QuerySet of all the books
         context['page_obj'] = page_obj
         context['page_name'] = "Add Previouse Expense"
+        context['report'] = report(expense_list)
         
         return context
 
