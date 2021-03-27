@@ -106,18 +106,20 @@ class ExpensePreviousCreateView(CreateView):
 
 class ExpenseUpdateView(UpdateView):
     form_class = ExpenseForm
-    template_name = 'expense/update.html'
+    template_name = 'expense/create.html'
     success_url = reverse_lazy('expense-create')
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(ExpenseUpdateView, self).get_context_data(**kwargs)
-        expense_list = Expense.objects.all()
+        expense_list = Expense.objects.filter(create_at=date.today())
         paginator = Paginator(expense_list, 9)
         page_number = self.request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         # Add in a QuerySet of all the books
         context['page_obj'] = page_obj
+        context['page_name'] = "Update Expense"
+        context['report'] = report(expense_list)
         return context
     
     def get_queryset(self):
