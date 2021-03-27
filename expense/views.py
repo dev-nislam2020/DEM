@@ -9,7 +9,7 @@ from django.views.generic.dates import (DayArchiveView, MonthArchiveView,
                                         WeekArchiveView)
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
-from expense.forms import CategoryForm, ExpenseForm
+from expense.forms import CategoryForm, ExpenseForm, ExpensePreviousForm
 from expense.models import Category, Expense
 
 
@@ -61,7 +61,7 @@ class HomeView(TemplateView):
 
 class ExpenseCreateView(CreateView):
     form_class = ExpenseForm
-    template_name = 'expense/list.html'
+    template_name = 'expense/create.html'
     success_url = reverse_lazy('expense-create')
     
 
@@ -74,8 +74,35 @@ class ExpenseCreateView(CreateView):
         page_obj = paginator.get_page(page_number)
         # Add in a QuerySet of all the books
         context['page_obj'] = page_obj
+        context['page_name'] = "Add Expense"
+        context['is_previose'] = True
         return context
     
+    def form_valid(self, form):
+        form.instance.create_at = date.today()
+        return super(ExpenseCreateView, self).form_valid(form)
+
+
+class ExpensePreviousCreateView(CreateView):
+    form_class = ExpensePreviousForm
+    template_name = 'expense/create.html'
+    success_url = reverse_lazy('expense-create')
+    
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(ExpensePreviousCreateView, self).get_context_data(**kwargs)
+        expense_list = Expense.objects.all()
+        paginator = Paginator(expense_list, 9)
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        # Add in a QuerySet of all the books
+        context['page_obj'] = page_obj
+        context['page_name'] = "Add Previouse Expense"
+        
+        return context
+
+
 class ExpenseUpdateView(UpdateView):
     form_class = ExpenseForm
     template_name = 'expense/update.html'

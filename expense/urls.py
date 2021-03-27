@@ -2,10 +2,13 @@ from django.urls import path
 
 from expense.views import (CategoryCreateView, CategoryUpdateView,
                            ExpenseCreateView, ExpenseDeleteView,
-                           ExpenseUpdateView, MonthView, TodayView, WeekView)
+                           ExpensePreviousCreateView, ExpenseUpdateView,
+                           MonthView, TodayView, WeekView)
 
 urlpatterns = [
     path('create/', ExpenseCreateView.as_view(), name='expense-create'),
+    path('create/previous', ExpensePreviousCreateView.as_view(), name='expense-create-previous'),
+
     path('<int:pk>/update/', ExpenseUpdateView.as_view(), name='expense-update'),
     path('<int:pk>/delete/', ExpenseDeleteView.as_view(), name='expense-delete'),
 
