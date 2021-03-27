@@ -1,58 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title>DEM | Expense</title>
-  </head>
-  <body>
-    <hr />
-    <h3>Daily Expense Manager...</h3>
-    <hr />
-    <p>
-      <span>EXPENSE DELETE PAGE --- </span
-      ><a href="{% url 'expense-home' %}">Home</a> <span> -- </span
-      ><a href="{% url 'expense-create' %}">Expense</a> <span> -- </span
-      ><a href="{% url 'category-create' %}">Create</a> <span> -- </span
-      ><a href="">Reports</a>
-    </p>
-    <hr />
-    <br />
-    <form method="post" action="{% url 'expense-delete' expense.pk %}">
-      {% csrf_token %} {% if expense %}
-      <table>
-        <caption>
-          Expense Status
-        </caption>
-        <tr>
-          <th colspan="2">#Date</th>
-          <th colspan="2">Category</th>
-          <th>Balance</th>
-          <th colspan="3">Notes</th>
-          <th colspan="2">Last Update</th>
-        </tr>
-        <tr>
-          <td colspan="2">{{ expense.create_at }}</td>
-          {% if expense.category %}
-          <td colspan="2" style="text-align: center">{{expense.category}}</td>
-          {% else %}
-          <td colspan="2" style="text-align: center">No Category</td>
-          {% endif %}
-          <td style="text-align: center">{{ expense.amount }}</td>
-          {% if expense.notes %}
-          <td colspan="3" style="text-align: center">{{ expense.notes }}</td>
-          {% else %}
-          <td colspan="3" style="text-align: center">No Notes</td>
-          {% endif %}
-          <td colspan="2" style="text-align: center">
-            {{ expense.update_at }}
-          </td>
-        </tr>
-      </table>
-      <h3>
-        Are you sure to Delete this Row ? <input type="submit" value="Delete" />
-      </h3>
+{% extends 'expense/base/base.html' %}
+
+{% block title %}{{page_name}}{% endblock title %}
+
+{% block content %}
+<form method="post" action="{% url 'expense-delete' expense.pk %}">
+  {% csrf_token %} {% if expense %}
+  <table>
+    <caption>
+      Expense Status
+    </caption>
+    <tr>
+      <th colspan="2">#Date</th>
+      <th colspan="2">Category</th>
+      <th>Balance</th>
+      <th colspan="3">Notes</th>
+      <th colspan="2">Last Update</th>
+    </tr>
+    <tr>
+      <td colspan="2">{{ expense.create_at }}</td>
+      {% if expense.category %}
+      <td colspan="2" style="text-align: center">{{expense.category}}</td>
       {% else %}
-      <p>You have no expense</p>
+      <td colspan="2" style="text-align: center">No Category</td>
       {% endif %}
-    </form>
-  </body>
-</html>
+      <td style="text-align: center">{{ expense.amount }}</td>
+      {% if expense.notes %}
+      <td colspan="3" style="text-align: center">{{ expense.notes }}</td>
+      {% else %}
+      <td colspan="3" style="text-align: center">No Notes</td>
+      {% endif %}
+      <td colspan="2" style="text-align: center">
+        {{ expense.update_at }}
+      </td>
+    </tr>
+  </table>
+  <h3>
+    Are you sure to Delete this Row ? <input type="submit" value="Delete" />
+  </h3>
+  {% else %}
+  <p>You have no expense</p>
+  {% endif %}
+</form>
+{% endblock content %}
