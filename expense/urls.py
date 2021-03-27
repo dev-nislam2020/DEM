@@ -8,7 +8,8 @@ from expense.views import (CategoryCreateView, CategoryUpdateView,
 urlpatterns = [
     path('create/', ExpenseCreateView.as_view(), name='expense-create'),
     path('create/previous', ExpensePreviousCreateView.as_view(), name='expense-create-previous'),
-
+    path('category/<int:pk>/create/', ExpenseCreateView.as_view(), name='category-expense-create'),
+    path('category/<int:pk>/create/previous', ExpensePreviousCreateView.as_view(), name='category-expense-create-previous'),
     path('<int:pk>/update/', ExpenseUpdateView.as_view(), name='expense-update'),
     path('<int:pk>/delete/', ExpenseDeleteView.as_view(), name='expense-delete'),
 

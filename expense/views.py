@@ -2,7 +2,7 @@ from datetime import date, timedelta
 
 from django.core.paginator import Paginator
 from django.db.models import Count, Sum
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.dates import (DayArchiveView, MonthArchiveView,
@@ -76,9 +76,14 @@ class ExpenseCreateView(CreateView):
         context['page_name'] = "Add Expense"
         context['is_previose'] = True
         context['report'] = report(expense_list)
+        context['is_expense'] = True
         return context
     
     def form_valid(self, form):
+        if self.request.GET.get('pk'):
+            self.category = get_object_or_404(Category, id=self.kwargs['pk'])
+            form.instance.category = self.category
+
         form.instance.create_at = date.today()
         return super(ExpenseCreateView, self).form_valid(form)
 
@@ -100,8 +105,16 @@ class ExpensePreviousCreateView(CreateView):
         context['page_obj'] = page_obj
         context['page_name'] = "Add Previouse Expense"
         context['report'] = report(expense_list)
+        context['is_expense'] = True
         
         return context
+
+    def form_valid(self, form):
+        if self.request.GET.get('pk'):
+            self.category = get_object_or_404(Category, id=self.kwargs['pk'])
+            form.instance.category = self.category
+
+        return super(ExpensePreviousCreateView, self).form_valid(form)
 
 
 class ExpenseUpdateView(UpdateView):
@@ -135,14 +148,23 @@ class ExpenseDeleteView(DeleteView):
 
 class CategoryCreateView(CreateView):
     form_class = CategoryForm
-    template_name = 'expense/category/list.html'
+    template_name = 'expense/create.html'
     success_url = reverse_lazy('category-create')
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(CategoryCreateView, self).get_context_data(**kwargs)
         # Add in a QuerySet of all the books
-        context['category_list'] = Category.objects.all()
+        category_list = Category.objects.all()
+        category = category_list.first()
+        print(category.expense_set.all().count())
+        paginator = Paginator(category_list, 9)
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        # Add in a QuerySet of all the books
+        context['page_obj'] = page_obj
+        context['page_name'] = "Add Expense Category"
+        context['is_category_expense'] = True
         return context
 
 class CategoryUpdateView(UpdateView):
@@ -155,9 +177,7 @@ class CategoryUpdateView(UpdateView):
         context = super(CategoryUpdateView, self).get_context_data(**kwargs)
         # Add in a QuerySet of all the books
         context['category_list'] = Category.objects.all()
-        category = Category.objects.all()
-        for cat in category:
-            print(cat.expense_set.all())
+        context['is_category_expense'] = True
         return context
 
     def get_queryset(self):
