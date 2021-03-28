@@ -1,6 +1,6 @@
 from django import forms
 
-from expense.models import Category, Expense
+from expense.models import Budget, Category, Expense
 
 
 # Create your forms here.
@@ -23,6 +23,10 @@ class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = ['name']
-        labels = {
-            'name':'Category Name'
-        }
+        
+
+class BudgetForm(forms.ModelForm):
+    class Meta:
+        model = Budget
+        fields = ['name', 'amount', 'budget_for', 'notes']
+        
