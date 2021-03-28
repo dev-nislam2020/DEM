@@ -57,6 +57,38 @@
   <p>You have no category</p>
 {% endif %}
 {% endif %}
+
+{% if is_budget_expense %}
+{% if page_obj %}
+<br/>
+<table>
+  <tr>
+    <th>#ID</th>
+    <th>Name</th>
+    <th>Budget</th>
+    <th>Notes</th>
+    <th>Edit</th>
+    <th>Expense</th>
+    <th>Add Expense</th>
+    <th>Add Previous Expense</th>
+  </tr>
+  {% for budget in page_obj %}
+  <tr>
+    <td>{{ forloop.counter }}</td>
+    <td>{{ budget.name }}</td>
+    <td>{{ budget.amount }}</td>
+    <td>{{ budget.notes }}</td>
+    <td><a href="{% url 'budget-update' budget.pk %}">Edit</a></td>
+    <td><a href="">List</a></td>
+    {% comment %} <td><a href="{% url 'budget-expense-create' budget.pk %}">New</a></td> {% endcomment %}
+    {% comment %} <td><a href="{% url 'budget-expense-create-previous' budget.pk %}">Previous</a></td> {% endcomment %}
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+  <p>You have no budget</p>
+{% endif %}
+{% endif %}
 <br />
   <div class="pagination">
     <span class="step-links">

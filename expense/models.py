@@ -22,7 +22,7 @@ class Budget(models.Model):
         ('7','WEEK'),
         ('30','MONTH'),
     )
-    name = models.CharField(verbose_name="Name", max_length=50, unique=True)
+    name = models.CharField(verbose_name="Name", max_length=10, unique=True)
     amount = models.IntegerField()
     budget_for = models.CharField(verbose_name="Budget For", max_length=50, choices=BUDGET_TIME)
     deadline = models.DateField()

@@ -9,8 +9,9 @@ from django.views.generic.dates import (DayArchiveView, MonthArchiveView,
                                         WeekArchiveView)
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
-from expense.forms import CategoryForm, ExpenseForm, ExpensePreviousForm
-from expense.models import Category, Expense
+from expense.forms import (BudgetForm, CategoryForm, ExpenseForm,
+                           ExpensePreviousForm)
+from expense.models import Budget, Category, Expense
 
 
 # Create your views here.
@@ -187,6 +188,53 @@ class CategoryUpdateView(UpdateView):
     def get_queryset(self):
         return Category.objects.all()
     
+class BudgetCreateView(CreateView):
+    form_class = BudgetForm
+    template_name = 'expense/create.html'
+    success_url = reverse_lazy('budget-create')
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(BudgetCreateView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        budget_list = Budget.objects.all()
+        paginator = Paginator(budget_list, 9)
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        # Add in a QuerySet of all the books
+        context['page_obj'] = page_obj
+        context['page_name'] = "Add Budget Expense"
+        context['is_budget_expense'] = True
+        return context
+
+    def form_valid(self, form):
+        day = form.cleaned_data['budget_for']
+        form.instance.deadline = date.today() + timedelta(int(day))
+        return super(BudgetCreateView, self).form_valid(form)
+
+
+class BudgetUpdateView(UpdateView):
+    form_class = BudgetForm
+    template_name = 'expense/create.html'
+    success_url = reverse_lazy('budget-create')
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(BudgetUpdateView, self).get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        budget_list = Budget.objects.all()
+        paginator = Paginator(budget_list, 9)
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        # Add in a QuerySet of all the books
+        context['page_obj'] = page_obj
+        context['page_name'] = "Update Budget Expense"
+        context['is_budget_expense'] = True
+        return context
+
+    def get_queryset(self):
+        return Budget.objects.all()
+
 class TodayView(DayArchiveView):
     queryset = Expense.objects.all()
     date_field = "create_at"

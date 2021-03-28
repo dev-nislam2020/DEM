@@ -1,6 +1,7 @@
 from django.urls import path
 
-from expense.views import (CategoryCreateView, CategoryUpdateView,
+from expense.views import (BudgetCreateView, BudgetUpdateView,
+                           CategoryCreateView, CategoryUpdateView,
                            ExpenseCreateView, ExpenseDeleteView,
                            ExpensePreviousCreateView, ExpenseUpdateView,
                            MonthView, TodayView, WeekView)
@@ -15,6 +16,9 @@ urlpatterns = [
 
     path('category/create/', CategoryCreateView.as_view(), name='category-create'),
     path('category/<int:pk>/update/', CategoryUpdateView.as_view(), name='category-update'),
+
+    path('budget/create/', BudgetCreateView.as_view(), name='budget-create'),
+    path('budget/<int:pk>/update/', BudgetUpdateView.as_view(), name='budget-update'),
 
     path('<int:year>/<str:month>/<int:day>/', TodayView.as_view(), name="archive_day"),
     path('<int:year>/<int:week>/week/', WeekView.as_view(), name="archive_week"),
